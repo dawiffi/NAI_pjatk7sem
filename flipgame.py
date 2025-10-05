@@ -1,3 +1,5 @@
+import random
+
 def generate_possible_next_moves(s: str):
     """
     Generate all possible states of the string after one valid move.
@@ -9,16 +11,25 @@ def generate_possible_next_moves(s: str):
             result.append(s[:i] + '--' + s[i + 2:])
     return result
 
+def generate_board(lenght : int) -> str:
+    ''' 
+    Creates a random string made out of '+' and '-' chars of a given lenght
+    this is our game board.
+
+    Args:
+        length (int): Lenght of the game board 
+
+    Returns:
+         
+    '''
+    board_string = ''
+    while True:
+        board_string = ''.join(random.choices(['+', '-'], k=lenght) )
+        if board_string.count("++") > 2:
+            return board_string
 
 if __name__ == "__main__":
-    import random
-    length = random.randint(4, 10)
-    while True:
-        input_string = ''.join(random.choice(['+', '-']) for _ in range(length))
-        if '++' in input_string:
-            break
-    input_string = ''.join(random.choice(['+', '-']) for _ in range(length))
-
+    input_string = generate_board(10)
     print("Input:", input_string)
     print("Possible next moves:", generate_possible_next_moves(input_string))
 
@@ -49,4 +60,4 @@ if __name__ == "__main__":
                         print("Invalid move.")
         print("Game over.")
     else:
-        print("Invalid move.")
+        print("Invalid move.") 
