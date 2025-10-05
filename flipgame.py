@@ -4,6 +4,12 @@ def generate_possible_next_moves(s: str):
     """
     Generate all possible states of the string after one valid move.
     A move is flipping two consecutive "++" into "--".
+
+    Args:
+        s (str): string representing current board state e.g. "++--+-++-"
+
+    Returns:
+        list: list of strings containing currently posible valid moves
     """
     result = []
     for i in range(len(s) - 1):
@@ -13,14 +19,14 @@ def generate_possible_next_moves(s: str):
 
 def generate_board(lenght : int) -> str:
     ''' 
-    Creates a random string made out of '+' and '-' chars of a given lenght
+    Creates a random string made out of '+' and '-' chars of a given length
     this is our game board.
 
     Args:
-        length (int): Lenght of the game board 
+        length (int): Length of the game board 
 
     Returns:
-         
+        str: the random level used for the game e.g. "++--+-++-"
     '''
     board_string = ''
     while True:
@@ -29,35 +35,21 @@ def generate_board(lenght : int) -> str:
             return board_string
 
 if __name__ == "__main__":
-    input_string = generate_board(10)
-    print("Input:", input_string)
-    print("Possible next moves:", generate_possible_next_moves(input_string))
+    board_state = generate_board(10)
 
-    player_input = input("Enter your move (e.g., '++' to '--'): ")
-    if player_input in generate_possible_next_moves(input_string):
-        print("Valid move!")
-        new_state = player_input
-        current_player = 1
-        while True:
-            print(f"Current player: {current_player}")
-            current_player = 2 if current_player == 1 else 1
-            player_input = input(f"Player {current_player}, enter your move (e.g., '++' to '--'): ")
-            if player_input in generate_possible_next_moves(new_state):
-                print("Valid move!")
-                new_state = player_input
-                current_player = 1
-                while True:
-                    if not generate_possible_next_moves(new_state):
-                        print(f"Player {current_player} wins!")
-                        break
-                    print(f"Current player: {current_player}")
-                    current_player = 2 if current_player == 1 else 1
-                    player_input = input(f"Player {current_player}, enter your move (e.g., '++' to '--'): ")
-                    if player_input in generate_possible_next_moves(new_state):
-                        print("Valid move!")
-                        new_state = player_input
-                    else:
-                        print("Invalid move.")
-        print("Game over.")
-    else:
-        print("Invalid move.") 
+    while True:
+        posible_moves = generate_possible_next_moves(board_state)
+        print("Game board:", board_state)
+        print("Possible next moves:", posible_moves, not posible_moves)
+        if not posible_moves:
+            print("Player you won!")
+            break
+        
+        player_input = input("enter your move (e.g., '++' to '--'): ")
+        if player_input in posible_moves:
+            print("Valid move!")
+            board_state = player_input
+        else:
+            print("Invalid move.")
+            continue 
+    print("Game over.")
