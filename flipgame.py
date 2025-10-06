@@ -4,10 +4,10 @@ from anytree import Node, RenderTree
 # maximal amount of steps when generating tree
 MAX_SEARCH_DEPTH = 8 
 # max length of the board (string size)
-MAX_BOARD_SIZE = 10 
+MAX_BOARD_SIZE = 12 
 # minimal amout of "++" occurrences for the board to be considered playable
 # this is so we don't generate game boards that are solved before the game begins
-MINIMAL_DOUBLE_SIGHN_OCCURANCE = 2 
+MINIMAL_DOUBLE_SIGHN_OCCURANCE = 3 
 
 def generate_possible_next_moves(s: str) -> list:
     """
@@ -82,16 +82,24 @@ def create_next_branches(parent: Node):
 
     Args:
         parent (Node): Node containing a board state that will be analised for next possible moves
+    Returns:
+        int: score of the branch needed for ai to make the final decision 
     '''
     parent_board = parent.name
     next_moves = generate_possible_next_moves(parent_board)
     if not next_moves or parent.depth > MAX_SEARCH_DEPTH:
         parent.is_last_child = True
-        return
+        if parent.depth % 2 == 0: # player wins on even ai wins on odd 
+            return -5 
+        else:
+            return 1
     else:
+        branch_value = 0 #branch_value is the sum of its children values 
         for move in next_moves:
-            new_child = Node(move, parent=parent, depth=parent.depth+1, is_last_child=False)
-            create_next_branches(new_child)
+            new_child = Node(move, parent=parent, depth=parent.depth+1, is_last_child=False, score=0)
+            branch_value += create_next_branches(new_child)
+        parent.score = branch_value
+    return parent.score
 
 def visualise_node_data(parent: Node):
     '''
@@ -107,15 +115,11 @@ def visualise_node_data(parent: Node):
             else:
                 print("%s\033[92m%s\033[00m" % (pre, node.name)) # ai wins on odd turns so we print green
         else:
-            print("%s%s" % (pre, node.name))
+            print("%s%s %s" % (pre, node.name, node.score))
 
 
 if __name__ == "__main__":
     board_state = generate_board(MAX_BOARD_SIZE)
-    #testing 
-    origial = Node(board_state, depth=0, is_last_child=False)
-    create_next_branches(origial)
-    visualise_node_data(origial)
 
     while True:
         # player turn
@@ -129,10 +133,26 @@ if __name__ == "__main__":
         #check win condition
         possible_moves = generate_possible_next_moves(board_state)
         if not possible_moves:
-            print("Player you won!")
+            print("Player won!")
             break
         
         # ai turn 
+        origial = Node(board_state, depth=0, is_last_child=False)
+        create_next_branches(origial)
+        #visualise_node_data(origial) #uncomment this to see visualisation of how the ai thinks
 
+        favorite_child = origial.children[0]
+        for potential_child in origial.children:
+            if potential_child.score > favorite_child.score:
+                favorite_child = potential_child
+        
+        board_state = favorite_child.name
+        print(f"Ai moved: {board_state}")
+        
+        #check win condition for ai
+        possible_moves = generate_possible_next_moves(board_state)
+        if not possible_moves:
+            print("Ai won!")
+            break
 
     print("Game over.")
