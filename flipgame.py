@@ -86,26 +86,40 @@ def create_next_branches(parent: Node):
     parent_board = parent.name
     next_moves = generate_possible_next_moves(parent_board)
     if not next_moves or parent.depth > MAX_SEARCH_DEPTH:
+        parent.is_last_child = True
         return
     else:
         for move in next_moves:
-            new_child = Node(move, parent=parent, depth=parent.depth+1)
+            new_child = Node(move, parent=parent, depth=parent.depth+1, is_last_child=False)
             create_next_branches(new_child)
+
+def visualise_node_data(parent: Node):
+    '''
+    visualises all the generated branches of the given node 
+
+    Args:
+        parent (Node): the parent node we want to display all children of 
+    '''
+    for pre, fill, node in RenderTree(origial):
+        if node.is_last_child:
+            if node.depth % 2 == 0:
+                print("%s\033[91m%s\033[00m" % (pre, node.name)) # player wins on even turns so we print it red
+            else:
+                print("%s\033[92m%s\033[00m" % (pre, node.name)) # ai wins on odd turns so we print green
+        else:
+            print("%s%s" % (pre, node.name))
 
 
 if __name__ == "__main__":
     board_state = generate_board(MAX_BOARD_SIZE)
     #testing 
-    origial = Node(board_state, depth=0)
+    origial = Node(board_state, depth=0, is_last_child=False)
     create_next_branches(origial)
+    visualise_node_data(origial)
 
-    for pre, fill, node in RenderTree(origial):
-        print("%s%s" % (pre, node.name))
-    
     while True:
         # player turn
         # inform player
-        print(board_state)
         possible_moves = generate_possible_next_moves(board_state)
         print("Game board:", board_state)
 
