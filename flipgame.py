@@ -118,41 +118,73 @@ def visualise_node_data(parent: Node):
             print("%s%s %s" % (pre, node.name, node.score))
 
 
+def player_turn(board: str) -> str:
+    '''
+    Processes all the logic of player turn.
+
+    Args:
+        board (str): current board state
+    Returns:
+        str: board state after player turn 
+    '''
+    # inform player
+    possible_moves = generate_possible_next_moves(board_state)
+    print("Game board:", board_state)
+
+    #player move
+    return get_player_move(board_state, possible_moves)
+
+def ai_turn(board: str) -> str:
+    '''
+    Processes all the logic of ai turn.
+
+    Args:
+        board (str): current board state
+    Returns:
+        str: board state after ai turn 
+    '''
+    # ai turn 
+    origial = Node(board_state, depth=0, is_last_child=False)
+    create_next_branches(origial)
+    #visualise_node_data(origial) #uncomment this to see visualisation of how the ai thinks
+
+    #select move with the highest score 
+    favorite_child = origial.children[0]
+    for potential_child in origial.children:
+        if potential_child.score > favorite_child.score:
+            favorite_child = potential_child
+    
+    #return move
+    print(f"Ai moved: {board_state}")
+    return favorite_child.name
+
+def chceck_win(win_text: str) -> bool:
+    '''
+    chceck the win condition and return it. also print the given win text
+
+    Args:
+        win_text (str): text that will be printed if the game ended
+    Returns:
+        str: returns if the game has ended 
+    '''
+    #check win condition
+    possible_moves = generate_possible_next_moves(board_state)
+
+    if not possible_moves:
+        print(win_text)
+        return True
+    return False
+
 if __name__ == "__main__":
     board_state = generate_board(MAX_BOARD_SIZE)
 
     while True:
-        # player turn
-        # inform player
-        possible_moves = generate_possible_next_moves(board_state)
-        print("Game board:", board_state)
-
-        #player move
-        board_state = get_player_move(board_state, possible_moves)
-
-        #check win condition
-        possible_moves = generate_possible_next_moves(board_state)
-        if not possible_moves:
-            print("Player won!")
+        board_state = player_turn(board_state)
+        if chceck_win("Player won!"):
             break
-        
-        # ai turn 
-        origial = Node(board_state, depth=0, is_last_child=False)
-        create_next_branches(origial)
-        #visualise_node_data(origial) #uncomment this to see visualisation of how the ai thinks
 
-        favorite_child = origial.children[0]
-        for potential_child in origial.children:
-            if potential_child.score > favorite_child.score:
-                favorite_child = potential_child
-        
-        board_state = favorite_child.name
-        print(f"Ai moved: {board_state}")
-        
-        #check win condition for ai
-        possible_moves = generate_possible_next_moves(board_state)
-        if not possible_moves:
-            print("Ai won!")
+        board_state = ai_turn(board_state)
+        if chceck_win("Ai won!"):
             break
 
     print("Game over.")
