@@ -1,6 +1,9 @@
 import random
 from anytree import Node, RenderTree
 
+# by Kacper Pach s27112 & Dawid Frontczak s29608
+# rules & environment setup in readme (https://github.com/dawiffi/NAI_pjatk7sem/blob/main/adversarial_search/README.md)
+
 # maximal amount of steps when generating tree
 MAX_SEARCH_DEPTH = 8 
 # max length of the board (string size)
