@@ -111,7 +111,7 @@ def visualise_node_data(parent: Node):
     Args:
         parent (Node): the parent node we want to display all children of 
     '''
-    for pre, fill, node in RenderTree(origial):
+    for pre, fill, node in RenderTree(parent):
         if node.is_last_child:
             if node.depth % 2 == 0:
                 print("%s\033[91m%s\033[00m" % (pre, node.name)) # player wins on even turns so we print it red
@@ -158,7 +158,7 @@ def ai_turn(board: str) -> str:
             favorite_child = potential_child
     
     #return move
-    print(f"Ai moved: {board_state}")
+    print(f"Ai moved: {favorite_child.name}")
     return favorite_child.name
 
 def chceck_win(win_text: str) -> bool:
