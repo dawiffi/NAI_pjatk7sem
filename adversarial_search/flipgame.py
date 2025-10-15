@@ -46,12 +46,11 @@ def generate_board(lenght : int) -> str:
         if board_string.count("++") > MINIMAL_DOUBLE_SIGHN_OCCURANCE:
             return board_string
             
-def get_player_move(board_state: str, possible_moves: list) -> str:
+def get_player_move(possible_moves: list) -> str:
     ''' 
     asks the player for the move and returns the board state after
 
     Args:
-        board_state (str): current board state
         possible_moves (list): list of moves the player can make in this turn 
 
     Returns:
@@ -121,7 +120,7 @@ def visualise_node_data(parent: Node):
             print("%s%s %s" % (pre, node.name, node.score))
 
 
-def player_turn(board: str) -> str:
+def player_turn(board_state: str) -> str:
     '''
     Processes all the logic of player turn.
 
@@ -135,9 +134,9 @@ def player_turn(board: str) -> str:
     print("Game board:", board_state)
 
     #player move
-    return get_player_move(board_state, possible_moves)
+    return get_player_move(possible_moves)
 
-def ai_turn(board: str) -> str:
+def ai_turn(board_state: str) -> str:
     '''
     Processes all the logic of ai turn.
 
@@ -149,7 +148,7 @@ def ai_turn(board: str) -> str:
     # ai turn 
     origial = Node(board_state, depth=0, is_last_child=False)
     create_next_branches(origial)
-    #visualise_node_data(origial) #uncomment this to see visualisation of how the ai thinks
+    visualise_node_data(origial) #uncomment this to see visualisation of how the ai thinks
 
     #select move with the highest score 
     favorite_child = origial.children[0]
@@ -161,7 +160,7 @@ def ai_turn(board: str) -> str:
     print(f"Ai moved: {favorite_child.name}")
     return favorite_child.name
 
-def chceck_win(win_text: str) -> bool:
+def check_win(win_text: str) -> bool:
     '''
     chceck the win condition and return it. also print the given win text
 
@@ -183,11 +182,11 @@ if __name__ == "__main__":
 
     while True:
         board_state = player_turn(board_state)
-        if chceck_win("Player won!"):
+        if check_win("Player won!"):
             break
 
         board_state = ai_turn(board_state)
-        if chceck_win("Ai won!"):
+        if check_win("Ai won!"):
             break
 
     print("Game over.")
