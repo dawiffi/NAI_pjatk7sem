@@ -1,7 +1,11 @@
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
-import matplotlib.pyplot as plt
+from skfuzzy.control.visualization import FuzzyVariableVisualizer
+import pygame_widgets
+import pygame
+from pygame_widgets.slider import Slider
+from pygame_widgets.textbox import TextBox
 
 ## notatki
 # na jutro: https://pythonhosted.org/scikit-fuzzy/auto_examples/plot_tipping_problem_newapi.html
@@ -10,54 +14,37 @@ import matplotlib.pyplot as plt
 ## Fuzzification
 
 # Generate universe variables
-x_temp = np.arange(30, 90, 0.1) # in C
-x_load = np.arange(0, 101, 1) # in %
-x_tdp = np.arange(0, 250, 1) # in Watts
+temp = ctrl.Antecedent(np.arange(30, 90, 0.1), "temp")  # in C
+load = ctrl.Antecedent(np.arange(0, 101, 1), "load")  # in %
+tdp = ctrl.Antecedent(np.arange(0, 250, 1), "tdp")  # in Watts
 
-x_fan_speed = np.arange(0, 101, 1) # (out) %
+fan_speed = ctrl.Consequent(np.arange(0, 101, 1), "fan_speed")  # (out) %
 
 # Generate fuzzy membership functions
+temp["low"] = fuzz.trimf(temp.universe, [30, 30, 50])
+temp["medium"] = fuzz.trimf(temp.universe, [40, 60, 80])
+temp["high"] = fuzz.trimf(temp.universe, [70, 90, 90])
 
-temp_lo = fuzz.trimf(x_temp, [30, 30, 50])
-temp_md = fuzz.trimf(x_temp, [40, 60, 80])
-temp_hi = fuzz.trimf(x_temp, [70, 90, 90])
-tdp_lo = fuzz.trimf(x_tdp, [0, 0, 40])
-tdp_md = fuzz.trimf(x_tdp, [30, 80, 140])
-tdp_hi = fuzz.trimf(x_tdp, [120, 250, 250])
-load_lo = fuzz.trimf(x_load, [0, 0, 30])
-load_md = fuzz.trimf(x_load, [20, 50, 80])
-load_hi = fuzz.trimf(x_load, [70, 100, 100])
+load["low"] = fuzz.trimf(load.universe, [0, 0, 30])
+load["medium"] = fuzz.trimf(load.universe, [20, 50, 80])
+load["high"] = fuzz.trimf(load.universe, [70, 100, 100])
 
-fan_speed_lo = fuzz.trimf(x_load, [0, 0, 30])
-fan_speed_md = fuzz.trimf(x_load, [20, 50, 80])
-fan_speed_hi = fuzz.trimf(x_load, [70, 100, 100])
+tdp["low"] = fuzz.trimf(tdp.universe, [0, 0, 40])
+tdp["medium"] = fuzz.trimf(tdp.universe, [30, 80, 140])
+tdp["high"] = fuzz.trimf(tdp.universe, [120, 250, 250])
+
+fan_speed["low"] = fuzz.trimf(fan_speed.universe, [0, 0, 30])
+fan_speed["medium"] = fuzz.trimf(fan_speed.universe, [20, 50, 80])
+fan_speed["high"] = fuzz.trimf(fan_speed.universe, [70, 100, 100])
 
 # Visualize these universes and membership functions
-fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, figsize=(8, 9))
-
-ax0.plot(x_temp, temp_lo, "b", linewidth=1.5, label="Low")
-ax0.plot(x_temp, temp_md, "g", linewidth=1.5, label="Medium")
-ax0.plot(x_temp, temp_hi, "r", linewidth=1.5, label="High")
-ax0.set_title("CPU Temperature")
-ax0.legend()
-
-ax1.plot(x_load, load_lo, "b", linewidth=1.5, label="Low")
-ax1.plot(x_load, load_md, "g", linewidth=1.5, label="Medium")
-ax1.plot(x_load, load_hi, "r", linewidth=1.5, label="High")
-ax1.set_title("CPU Load")
-ax1.legend()
-
-ax2.plot(x_tdp, tdp_lo, "b", linewidth=1.5, label="Low")
-ax2.plot(x_tdp, tdp_md, "g", linewidth=1.5, label="Medium")
-ax2.plot(x_tdp, tdp_hi, "r", linewidth=1.5, label="High")
-ax2.set_title("CPU TDP")
-ax2.legend()
-
-# plt.tight_layout()
-# plt.show()
+# temp.view()
+# load.view()
+# tdp.view()
+# fan_speed.view()
 
 ## Rule Base
-# 
+#
 #   | Temp  | TDP   | Load  | FAN_SPEED |
 #   | ----- | ----- | ----- | --------- |
 #   | Hi    | -     | -     | Hi        |
@@ -68,14 +55,70 @@ ax2.legend()
 #   | Lo    | Hi    | Hi    | Md        |
 #
 
-rule1 = ctrl.Rule(temp_hi, fan_speed_hi)
-rule2 = ctrl.Rule(temp_lo, fan_speed_lo)
-rule3 = ctrl.Rule(temp_md & tdp_lo & load_hi, fan_speed_lo)
-rule4 = ctrl.Rule(temp_md & tdp_hi & load_hi, fan_speed_hi)
-rule5 = ctrl.Rule(temp_md & tdp_md & load_hi, fan_speed_md)
-rule6 = ctrl.Rule(temp_lo & tdp_hi & load_hi, fan_speed_md)
+rule1 = ctrl.Rule(temp["high"], fan_speed["high"])
+rule2 = ctrl.Rule(temp["low"], fan_speed["low"])
+rule3 = ctrl.Rule(temp["medium"] & tdp["low"] & load["high"], fan_speed["low"])
+rule4 = ctrl.Rule(temp["medium"] & tdp["high"] & load["high"], fan_speed["high"])
+rule5 = ctrl.Rule(temp["medium"] & tdp["medium"] & load["high"], fan_speed["medium"])
+rule6 = ctrl.Rule(temp["low"] & tdp["high"] & load["high"], fan_speed["medium"])
 
-rule1.view()
-
-fan_ctrl = ctrl.ControlSystem([rule1, rule2, rule3, rule4, rule5, rule6])
+# rule2.view()
+# input()
+fan_ctrl = ctrl.ControlSystem([rule1, rule2, rule3])  # , rule4])#, rule5, rule6])
 fan = ctrl.ControlSystemSimulation(fan_ctrl)
+
+pygame.init()
+pygame.font.init()  # you have to call this at the start,
+# if you want to use this module.
+my_font = pygame.font.SysFont("Comic Sans MS", 18)
+win = pygame.display.set_mode((1000, 600))
+
+text_surface_temp = my_font.render("temp", False, (0, 0, 0))
+text_surface_load = my_font.render("load", False, (0, 0, 0))
+text_surface_tdp = my_font.render("tdp", False, (0, 0, 0))
+
+slider_temp = Slider(win, 100, 10, 800, 10, min=30, max=89, step=1)
+slider_load = Slider(win, 100, 30, 800, 10, min=0, max=100, step=1)
+slider_tdp = Slider(win, 100, 50, 800, 10, min=0, max=250, step=1)
+
+output_temp = TextBox(win, 910, 0, 80, 27, fontSize=16)
+output_temp.disable()  # Act as label instead of textbox
+output_load = TextBox(win, 910, 28, 80, 27, fontSize=16)
+output_load.disable()  # Act as label instead of textbox
+output_tdp = TextBox(win, 910, 50, 80, 27, fontSize=16)
+output_tdp.disable()  # Act as label instead of textbox
+
+run = True
+while run:
+    events = pygame.event.get()
+    for event in events:
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            run = False
+            quit()
+
+    win.fill((255, 255, 255))
+
+    output_load.setText(str(slider_load.getValue()))
+    output_temp.setText(str(slider_temp.getValue()))
+    output_tdp.setText(str(slider_tdp.getValue()))
+
+    win.blit(text_surface_load, (0, 0))
+    win.blit(text_surface_temp, (0, 20))
+    win.blit(text_surface_tdp, (0, 40))
+
+    fan.input["temp"] = slider_temp.getValue()
+    fan.input["tdp"] = slider_tdp.getValue()
+    fan.input["load"] = slider_load.getValue()
+
+    fan.compute()
+    try:
+        print(fan.output["fan_speed"])
+    except:
+        print("err")
+
+    pygame_widgets.update(events)
+    pygame.display.update()
+
+
+fig, ax = FuzzyVariableVisualizer(fan_speed).view(sim=fan)
