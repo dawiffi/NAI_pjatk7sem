@@ -5,7 +5,7 @@ for the api integration you need to supply your own TMDB API key you can get it 
 https://developer.themoviedb.org/reference/getting-started
 the key need to be filled in the `recomend.py` as TMDB_API_KEY = "YOUR_KEY" 
 
-parameters like TARGET_USER, file_path, NUM_CLUSTERS, N_RECOMMENDATIONS can be changed changed by the user in script directly
+parameters like TARGET_USER, file_path, NUM_CLUSTERS, N_RECOMMENDATIONS can be changed by the user in script directly
 
 to run:
 `python ./recomend.py`
