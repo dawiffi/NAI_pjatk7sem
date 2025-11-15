@@ -11,3 +11,6 @@ to run:
 `python ./recomend.py`
 
 if you want to supply your own data it needs to be formatted in the same way as in `formatted_data.csv` with the same column names.
+
+## Examples
+![examples](./examples.png)
