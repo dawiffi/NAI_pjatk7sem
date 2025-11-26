@@ -15,68 +15,48 @@ def rate_model(X_test, y_test, classifier, name):
     print(classification_report(y_test, dt_predictions))
     print("---")
 
+def prepare_and_test(parameter_set, result_set ):
+    # Podział danych na zbiór treningowy i testowy
+    # Używamy stratify=y, aby zachować proporcje klas w obu zbiorach
+    X_train, X_test, y_train, y_test = train_test_split(parameter_set, result_set, test_size=0.2, stratify=result_set)
+
+    # --- Przygotowanie dla SVM (Skalowanie) ---
+    # SVM jest wrażliwe na skalę cech. Choć dane Sonar są w zakresie [0, 1],
+    # warto je przeskalować standardowo dla optymalnej pracy jądra RBF.
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    # --- 1. Trening Drzewa Decyzyjnego ---
+    dt_classifier = DecisionTreeClassifier()
+    dt_classifier.fit(X_train, y_train)
+
+    # --- 2. Trening Maszyny Wektorów Wspierających (SVM) ---
+    # Użycie jądra (kernel) RBF (Radial Basis Function) dla nieliniowej klasyfikacji
+    # Używamy przeskalowanych danych
+    svm_classifier = SVC(kernel='rbf', class_weight='balanced')
+    svm_classifier.fit(X_train_scaled, y_train)
+
+    ## Drzewo Decyzyjne
+    rate_model(X_test, y_test, dt_classifier, "Drzewo decyzyjne")
+
+    ## SVM
+    rate_model(X_test_scaled, y_test, svm_classifier, "SVM") 
+
 df = pd.read_csv('sonar.all-data') 
 
 # Ostatnia kolumna to etykieta, reszta to cechy
 X = df.iloc[:, :-1]  # Wszystkie kolumny oprócz ostatniej
 y = df.iloc[:, -1]   # Ostatnia kolumna (klasa: 'R' lub 'M')
 
-# Podział danych na zbiór treningowy i testowy
-# Używamy stratify=y, aby zachować proporcje klas w obu zbiorach
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y)
-
-# --- Przygotowanie dla SVM (Skalowanie) ---
-# SVM jest wrażliwe na skalę cech. Choć dane Sonar są w zakresie [0, 1],
-# warto je przeskalować standardowo dla optymalnej pracy jądra RBF.
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
-
-# --- 1. Trening Drzewa Decyzyjnego ---
-dt_classifier = DecisionTreeClassifier()
-dt_classifier.fit(X_train, y_train)
-
-# --- 2. Trening Maszyny Wektorów Wspierających (SVM) ---
-# Użycie jądra (kernel) RBF (Radial Basis Function) dla nieliniowej klasyfikacji
-# Używamy przeskalowanych danych
-svm_classifier = SVC(kernel='rbf')
-svm_classifier.fit(X_train_scaled, y_train)
-
-## Drzewo Decyzyjne
-rate_model(X_test, y_test, dt_classifier, "Drzewo decyzyjne")
-
-## SVM
-rate_model(X_test, y_test, svm_classifier, "SVM")
+prepare_and_test(X,y)
 
 # dataset 2 
-print("--- BMW ---")
+print("--- BMW sales ---")
 df = pd.read_csv('BMW_sales(2010-2024).csv', header=1) 
-X = df.iloc[:, :-1]  # Wszystkie kolumny oprócz ostatniej
+X = df.iloc[:, :-2]  # Wszystkie kolumny oprócz dwóch ostatnich
 y = df.iloc[:, -1] # Ostatnia kolumna (Sales_Classification: 'Low' lub 'High')
 
 X_encoded = pd.get_dummies(X)
 
-X_train, X_test, y_train, y_test = train_test_split(X_encoded, y, test_size=0.3, stratify=y)
-
-# --- Przygotowanie dla SVM (Skalowanie) ---
-# SVM jest wrażliwe na skalę cech. Choć dane Sonar są w zakresie [0, 1],
-# warto je przeskalować standardowo dla optymalnej pracy jądra RBF.
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
-
-# --- 1. Trening Drzewa Decyzyjnego ---
-dt_classifier = DecisionTreeClassifier()
-dt_classifier.fit(X_train, y_train)
-
-# --- 2. Trening Maszyny Wektorów Wspierających (SVM) ---
-# Użycie jądra (kernel) RBF (Radial Basis Function) dla nieliniowej klasyfikacji
-# Używamy przeskalowanych danych
-svm_classifier = SVC(kernel='rbf')
-svm_classifier.fit(X_train_scaled, y_train)
-
-## Drzewo Decyzyjne
-rate_model(X_test, y_test, dt_classifier, "Drzewo decyzyjne BMW")
-
-## SVM
-rate_model(X_test, y_test, svm_classifier, "SVM BMW")
+prepare_and_test(X_encoded,y)
