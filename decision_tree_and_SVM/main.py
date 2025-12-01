@@ -1,9 +1,13 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report, accuracy_score
+from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
+from sklearn.inspection import DecisionBoundaryDisplay
+import matplotlib.pyplot as plt
+
 
 # --- Ocena Modeli ---
 def rate_model(X_test, y_test, classifier, name):
@@ -30,18 +34,25 @@ def prepare_and_test(parameter_set, result_set ):
     # --- 1. Trening Drzewa Decyzyjnego ---
     dt_classifier = DecisionTreeClassifier()
     dt_classifier.fit(X_train, y_train)
+    dt_predictions = dt_classifier.predict(X_test)
+    plot_tree(dt_classifier)
+    plt.show()
 
     # --- 2. Trening Maszyny Wektorów Wspierających (SVM) ---
     # Użycie jądra (kernel) RBF (Radial Basis Function) dla nieliniowej klasyfikacji
     # Używamy przeskalowanych danych
     svm_classifier = SVC(kernel='rbf', class_weight='balanced')
     svm_classifier.fit(X_train_scaled, y_train)
+    svm_predictions = svm_classifier.predict(X_train_scaled)
+    disp = DecisionBoundaryDisplay.from_estimator(svm_classifier, X_train)
+    plt.show()
 
     ## Drzewo Decyzyjne
     rate_model(X_test, y_test, dt_classifier, "Drzewo decyzyjne")
 
     ## SVM
     rate_model(X_test_scaled, y_test, svm_classifier, "SVM") 
+
 
 df = pd.read_csv('sonar.all-data') 
 
