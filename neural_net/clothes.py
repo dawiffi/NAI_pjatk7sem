@@ -44,7 +44,7 @@ print(f"Dokładność (Accuracy): {acc * 100:.2f}%")
 print("\nRaport klasyfikacji:")
 print(classification_report(y_test, y_pred, target_names=class_names))
 
-disp = ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred))
+disp = ConfusionMatrixDisplay(confusion_matrix(y_test, y_pred), display_labels=class_names)
 disp.plot()
 
 visualize_predictions("clothes",X_test_raw, y_test, y_pred, class_names)

@@ -33,10 +33,10 @@ y_train_small = y_train[:subset_size]
 print(f"Dane przygotowane. Trenujemy na {subset_size} przykładach.")
 
 mlp = MLPClassifier(
-    hidden_layer_sizes=(128, 64), 
+    hidden_layer_sizes=(32, 16), 
     max_iter=100, 
     verbose=True,      # Wypisuje postęp w konsoli
-    early_stopping=True # Zatrzymuje trening, jeśli sieć przestaje się uczyć
+    #early_stopping=True # Zatrzymuje trening, jeśli sieć przestaje się uczyć
 )
 
 start_time = time.time()

@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score, classification_report
 
 # by Kacper Pach s27112 & Dawid Frontczak s29608
 # environment setup i dokumentacja w readme (https://github.com/dawiffi/NAI_pjatk7sem/blob/main/neural_net/README.md)
