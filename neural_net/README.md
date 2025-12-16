@@ -4,6 +4,7 @@ before using make shure you have:
 1. Wykorzystać jeden z zbiorów danych z poprzednich ćwiczeń i naucz sieć neuronową.
 Porównaj skuteczność obu podejść. Dodaj logi/print screen do repozytorium.
 `python .\sonar.py`
+
 2. Naucz sieć rozpoznać zwierzęta, np. z zbioru CIFAR10
 3. Naucz sieć rozpoznawać ubrania. np. GitHub - zalandoresearch/fashion-mnist: A MNIST-like fashion product database. 
 4. Zaskocz mnie. Zaproponuj własny przypadek użycia sieci neuronowych do problemu klasyfikacji.
