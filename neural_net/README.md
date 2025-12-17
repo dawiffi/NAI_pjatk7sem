@@ -1,4 +1,4 @@
-before using make shure you have: 
+Przed uruchomieniem upewnij się, że masz: 
 `pip install numpy scikit-image scikit-learn kagglehub pandas tensorflow`
 
 1. Wykorzystać jeden z zbiorów danych z poprzednich ćwiczeń i naucz sieć neuronową.
@@ -10,7 +10,7 @@ wynik z poprzedniego zadania:
 <img width="592" height="603" alt="image" src="https://github.com/user-attachments/assets/b7741721-7f48-4b13-9de2-4f3839901608" />
 w przypadku małego prostego datasetu jakim jest sonar drzewo decyzyjne daje dokładniejsze wyniki
 
-2. Naucz sieć rozpoznać zwierzęta, np. z zbioru CIFAR10
+2. Naucz sieć rozpoznawać zwierzęta, np. z zbioru CIFAR10
 `python .\animals.py`
 <img width="1497" height="831" alt="image" src="https://github.com/user-attachments/assets/2ea3dc5f-2792-47ae-a0c3-5ca5672cee63" />
 
