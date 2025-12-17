@@ -32,5 +32,5 @@ rozmiar 1 (128, 64):
 <img width="523" height="492" alt="image" src="https://github.com/user-attachments/assets/18d21d9a-7794-4e49-8d94-ebe549de5c5d" />
 rozmiar 2 (256, 128, 32):
 <img width="535" height="497" alt="image" src="https://github.com/user-attachments/assets/78c568c6-3118-433b-8268-bdceac5bab8e" />
-w tym przypadku trening na większym rozmiarze sieci nie przyniusł dużych korzyści, jednak zwiększył mocno czas trenowania 
+w tym przypadku trening na większym rozmiarze sieci nie przyniósł dużych korzyści, jednak zwiększył mocno czas trenowania.
 
