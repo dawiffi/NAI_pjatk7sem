@@ -17,13 +17,13 @@ while(1):
     cv2.imshow('frame',frame)
 
 
-cap = cv2.VideoCapture(10)
+capCam = cv2.VideoCapture(0)
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
 
 while True:
-    ret, frame = cap.read()
+    ret, frame = capCam.read()
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
@@ -40,5 +40,5 @@ while True:
     if cv2.waitKey(1) == ord('q'):
         break
 
-cap.release()
+capCam.release()
 cv2.destroyAllWindows()
