@@ -1,7 +1,24 @@
 import numpy as np
-import cv2
+import cv2 
 
-cap = cv2.VideoCapture(0)
+
+cap = cv2.VideoCapture("ad.mp4")
+videoPlaying = True 
+
+while(1):
+    if videoPlaying:
+        ret, frame = cap.read()
+    if cv2.waitKey(1) == ord('q') or ret==False :
+       cap.release()
+       cv2.destroyAllWindows()
+       break
+    if cv2.waitKey(1) == ord('p'):
+       videoPlaying = not videoPlaying
+    cv2.imshow('frame',frame)
+
+
+cap = cv2.VideoCapture(10)
+
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
 
@@ -18,7 +35,7 @@ while True:
         for (ex, ey, ew, eh) in eyes:
             cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 5)
 
-    cv2.imshow('frame', frame)
+    cv2.imshow('frame_2', frame)
 
     if cv2.waitKey(1) == ord('q'):
         break
