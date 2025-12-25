@@ -1,6 +1,8 @@
 import numpy as np
 import cv2 
 
+# by Kacper Pach s27112 & Dawid Frontczak s29608
+# rules & environment setup in readme (https://github.com/dawiffi/NAI_pjatk7sem/blob/main/computer_vision/README.md)
 
 cap = cv2.VideoCapture("ad.mp4")
 videoPlaying = True 
@@ -11,11 +13,30 @@ face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_fronta
 eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
 
 def play_video(cap, videoPlaying):
+    """
+    Renders the next frame of the video file if the playback state is active.
+
+    Args:
+        cap (cv2.VideoCapture): The video file capture object.
+        videoPlaying (bool): Flag indicating if the video should currently play.
+    """
     if videoPlaying:
         ret, frame = cap.read()
         cv2.imshow('Reklama',frame)
 
 def capture_camera(capCam):
+    """
+    Captures a frame from the webcam, detects faces/eyes, and draws bounding boxes.
+
+    Processes the frame to grayscale, identifies regions of interest (ROI) for faces,
+    and then searches for eyes within those regions.
+
+    Args:
+        capCam (cv2.VideoCapture): The webcam capture object.
+
+    Returns:
+        int: Total number of eyes detected in the current frame.
+    """
     ret, frame = capCam.read()
     eyes_total = 0
 
@@ -44,4 +65,5 @@ while True:
         break
 
 capCam.release()
+cap.release()
 cv2.destroyAllWindows()
