@@ -5,7 +5,7 @@ import cv2
 cap = cv2.VideoCapture("ad.mp4")
 videoPlaying = True 
 
-capCam = cv2.VideoCapture("vide.mp4")
+capCam = cv2.VideoCapture(0)
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
@@ -31,8 +31,7 @@ def capture_camera(capCam):
             cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 5)
     cv2.imshow('camera', frame)
     return eyes_total
-
-     
+ 
 while True:
     play_video(cap, videoPlaying)
     eyes_total = capture_camera(capCam)
